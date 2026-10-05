@@ -125,3 +125,20 @@
   text-align: right;
   white-space: nowrap;
 }
+
+.ledger-summary {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  margin: 20px auto;
+}
+
+.ledger-summary span {
+  display: block;
+  font-size: 0.85em;
+  color: #666;
+}
+
+.ledger-summary strong {
+  font-size: 1.3em;
+}
