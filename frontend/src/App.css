@@ -84,3 +84,13 @@
     animation: App-logo-spin 1s linear infinite;
   }
 }
+
+/* Declared after the zebra-striping rule above, which has equal specificity,
+   so these win on source order. */
+.tenant-list tr.owes {
+  background-color: #fdecea;
+}
+
+.tenant-list tr.in-credit {
+  background-color: #eaf3fb;
+}
