@@ -118,3 +118,10 @@
   border-color: #282c34;
   color: white;
 }
+
+/* Money reads wrong when left-aligned: digits need to line up by place. */
+.tenant-ledger th.amount,
+.tenant-ledger td.amount {
+  text-align: right;
+  white-space: nowrap;
+}

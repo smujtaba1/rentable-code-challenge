@@ -1,5 +1,19 @@
 import React, { useEffect, useState } from 'react';
-import formatCurrency from './formatCurrency';
+import formatCurrency, { formatSigned } from './formatCurrency';
+
+// The balance after every entry, not just at the end. Reconciling means
+// comparing two ledgers until the numbers stop matching, and a closing total
+// only says that something diverged, not where.
+const withRunningBalance = (rows) => {
+    let running = 0;
+    return rows.map(row => {
+        // What this entry does to the balance. Not the same as the raw
+        // amount: a negative payment is a returned payment, which adds.
+        const effect = row.type === 'charge' ? Number(row.amount) : -Number(row.amount);
+        running += effect;
+        return { ...row, effect, running };
+    });
+};
 
 // The tenant is passed in rather than refetched: the row that was clicked
 // already holds its name, unit and balance.
@@ -44,16 +58,20 @@ function TenantLedger({ tenant, onBack }) {
                             <th>Date</th>
                             <th>Description</th>
                             <th>Type</th>
-                            <th>Amount</th>
+                            <th className="amount">Amount</th>
+                            <th className="amount">Balance</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {transactions.map(transaction => (
+                        {withRunningBalance(transactions).map(transaction => (
                             <tr key={transaction.id}>
                                 <td>{transaction.date}</td>
                                 <td>{transaction.description}</td>
                                 <td>{transaction.type}</td>
-                                <td>{formatCurrency(transaction.amount)}</td>
+                                {/* The signed effect, so the row states
+                                    whether it adds or subtracts. */}
+                                <td className="amount">{formatSigned(transaction.effect)}</td>
+                                <td className="amount">{formatCurrency(transaction.running)}</td>
                             </tr>
                         ))}
                     </tbody>
