@@ -33,6 +33,7 @@ function TenantList() {
                     <thead>
                         <tr>
                             <th>ID</th>
+                            <th>PMS ID</th>
                             <th>Name</th>
                             <th>Unit</th>
                             <th>Action</th>
@@ -42,6 +43,7 @@ function TenantList() {
                         {tenants.map(tenant => (
                             <tr key={tenant.id}>
                                 <td>{tenant.id}</td>
+                                <td>{tenant.pms_tenant_id}</td>
                                 <td>{tenant.name}</td>
                                 <td>{tenant.unit}</td>
                                 <td><button>View Ledger</button></td>
