@@ -7,6 +7,9 @@ function App() {
   // Which tenant's ledger is open, or null for the list. A view swap rather
   // than a route, since no router is installed.
   const [selectedTenant, setSelectedTenant] = useState(null);
+  // Held here rather than in TenantList, which unmounts while a ledger is
+  // open and would otherwise reset the filter on the way back.
+  const [activeFilter, setActiveFilter] = useState('all');
 
   return (
     <div className="App">
@@ -20,7 +23,11 @@ function App() {
             onBack={() => setSelectedTenant(null)}
           />
         ) : (
-          <TenantList onSelectTenant={setSelectedTenant} />
+          <TenantList
+            onSelectTenant={setSelectedTenant}
+            activeFilter={activeFilter}
+            onFilterChange={setActiveFilter}
+          />
         )}
       </main>
     </div>

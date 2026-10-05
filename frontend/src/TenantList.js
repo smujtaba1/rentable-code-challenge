@@ -17,11 +17,10 @@ const FILTERS = [
     { key: 'settled', label: 'Settled', match: (value) => value === 0 },
 ];
 
-function TenantList({ onSelectTenant }) {
+function TenantList({ onSelectTenant, activeFilter, onFilterChange }) {
     const [tenants, setTenants] = useState([]);
     const [error, setError] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
-    const [activeFilter, setActiveFilter] = useState('all');
 
     useEffect(() => {
         fetch('/api/tenants/')
@@ -65,7 +64,7 @@ function TenantList({ onSelectTenant }) {
                 {FILTERS.map(({ key, label, match }) => (
                     <button
                         key={key}
-                        onClick={() => setActiveFilter(key)}
+                        onClick={() => onFilterChange(key)}
                         className={key === activeFilter ? 'active' : ''}
                         aria-pressed={key === activeFilter}
                     >
