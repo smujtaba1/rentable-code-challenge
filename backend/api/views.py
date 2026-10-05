@@ -2,10 +2,11 @@ from decimal import Decimal
 
 from django.db.models import Case, DecimalField, F, Sum, Value, When
 from django.db.models.functions import Coalesce
+from django.shortcuts import get_object_or_404
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
-from api.models import Tenant, Transaction
+from api.models import Tenant
 from api.serializers import TenantSerializer, TransactionSerializer
 
 # Create your views here.
@@ -44,10 +45,12 @@ def tenant_list(request):
     return Response(serializer.data)
 
 @api_view(['GET'])
-def transaction_list(request):
+def tenant_transactions(request, tenant_id):
     """
-    Returns a list of transactions, optionally filtered by tenant.
+    Returns one tenant's ledger, oldest first.
     """
-    transactions = Transaction.objects.all()
-    serializer = TransactionSerializer(transactions, many=True)
+    # 404s on an unknown tenant, so that reads differently from a real tenant
+    # whose ledger happens to be empty.
+    tenant = get_object_or_404(Tenant, pk=tenant_id)
+    serializer = TransactionSerializer(tenant.transactions.all(), many=True)
     return Response(serializer.data) 

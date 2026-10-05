@@ -14,4 +14,5 @@ class TenantSerializer(serializers.ModelSerializer):
 class TransactionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Transaction
-        fields = ['id', 'tenant', 'date', 'description', 'type', 'amount']
+        # tenant is omitted: the ledger endpoint is already scoped to one.
+        fields = ['id', 'date', 'description', 'type', 'amount']

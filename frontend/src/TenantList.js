@@ -1,9 +1,5 @@
 import React, { useEffect, useState } from 'react';
-
-// The API serializes balance as a string, so it needs coercing before any
-// comparison or formatting.
-const formatCurrency = (balance) =>
-    Number(balance).toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+import formatCurrency from './formatCurrency';
 
 // A positive balance is money owed, which is who the manager chases. A
 // negative one is the tenant in credit, so it must not look like a debt.
@@ -21,7 +17,7 @@ const FILTERS = [
     { key: 'settled', label: 'Settled', match: (value) => value === 0 },
 ];
 
-function TenantList() {
+function TenantList({ onSelectTenant }) {
     const [tenants, setTenants] = useState([]);
     const [error, setError] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
@@ -99,7 +95,7 @@ function TenantList() {
                                 <td>{tenant.name}</td>
                                 <td>{tenant.unit}</td>
                                 <td>{formatCurrency(tenant.balance)}</td>
-                                <td><button>View Ledger</button></td>
+                                <td><button onClick={() => onSelectTenant(tenant)}>View Ledger</button></td>
                             </tr>
                         ))}
                     </tbody>

@@ -35,25 +35,30 @@
   padding: 20px;
 }
 
-.tenant-list table {
+.tenant-list table,
+.tenant-ledger table {
   width: 80%;
   margin: 20px auto;
   border-collapse: collapse;
 }
 
 .tenant-list th,
-.tenant-list td {
+.tenant-list td,
+.tenant-ledger th,
+.tenant-ledger td {
   border: 1px solid #ddd;
   padding: 8px;
   text-align: left;
 }
 
-.tenant-list th {
+.tenant-list th,
+.tenant-ledger th {
   background-color: #f2f2f2;
   color: #333;
 }
 
-.tenant-list tr:nth-child(even) {
+.tenant-list tr:nth-child(even),
+.tenant-ledger tr:nth-child(even) {
   background-color: #f9f9f9;
 }
 
