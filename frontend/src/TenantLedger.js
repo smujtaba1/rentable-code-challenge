@@ -84,6 +84,14 @@ function TenantLedger({ tenant, onBack }) {
                             <strong>{formatCurrency(totals.balance)}</strong>
                         </div>
                     </div>
+                    {/* A plain link: the server sets Content-Disposition, so
+                        the browser handles the download itself. */}
+                    <a
+                        className="csv-link"
+                        href={`/api/tenants/${tenant.id}/transactions/csv/`}
+                    >
+                        Download CSV
+                    </a>
                     <table>
                         <thead>
                             <tr>

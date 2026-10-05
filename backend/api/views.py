@@ -1,12 +1,15 @@
+import csv
 from decimal import Decimal
 
 from django.db.models import Case, DecimalField, F, Sum, Value, When
 from django.db.models.functions import Coalesce
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
+from django.utils.text import slugify
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
-from api.models import Tenant
+from api.models import Tenant, Transaction
 from api.serializers import TenantSerializer, TransactionSerializer
 
 # Create your views here.
@@ -54,3 +57,36 @@ def tenant_transactions(request, tenant_id):
     tenant = get_object_or_404(Tenant, pk=tenant_id)
     serializer = TransactionSerializer(tenant.transactions.all(), many=True)
     return Response(serializer.data) 
+
+# Deliberately not an @api_view: this returns a file, not a representation to
+# be content-negotiated, and DRF's renderer machinery only gets in the way.
+def tenant_transactions_csv(request, tenant_id):
+    """
+    Returns one tenant's ledger as CSV, matching the columns on screen.
+    """
+    tenant = get_object_or_404(Tenant, pk=tenant_id)
+
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = (
+        f'attachment; filename="ledger-{slugify(tenant.name)}.csv"'
+    )
+
+    writer = csv.writer(response)
+    writer.writerow(['Date', 'Description', 'Type', 'Amount', 'Balance'])
+
+    running = Decimal('0.00')
+    for entry in tenant.transactions.all():
+        # The signed effect, so the Amount column sums to the balance in a
+        # spreadsheet. Written as bare decimals, not formatted currency, or
+        # Excel reads them as text.
+        effect = (
+            entry.amount
+            if entry.type == Transaction.Type.CHARGE
+            else -entry.amount
+        )
+        running += effect
+        writer.writerow([
+            entry.date, entry.description, entry.type, effect, running,
+        ])
+
+    return response
