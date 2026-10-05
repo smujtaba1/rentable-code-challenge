@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 function TenantList() {
     const [tenants, setTenants] = useState([]);
     const [error, setError] = useState(null);
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         fetch('/api/tenants/')
@@ -16,8 +17,17 @@ function TenantList() {
             .catch(error => {
                 console.error("Error fetching tenants:", error);
                 setError(error);
-            });
+            })
+            .finally(() => setIsLoading(false));
     }, []);
+
+    if (isLoading) {
+        return (
+            <div className="tenant-list">
+                <div className="spinner" role="status" aria-label="Loading tenants" />
+            </div>
+        );
+    }
 
     if (error) {
         return <div>Error loading tenants: {error.message}</div>;
