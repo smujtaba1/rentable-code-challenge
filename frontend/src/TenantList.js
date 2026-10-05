@@ -14,10 +14,18 @@ const balanceClass = (balance) => {
     return '';
 };
 
+const FILTERS = [
+    { key: 'all', label: 'All', match: () => true },
+    { key: 'owes', label: 'Owes', match: (value) => value > 0 },
+    { key: 'credit', label: 'In Credit', match: (value) => value < 0 },
+    { key: 'settled', label: 'Settled', match: (value) => value === 0 },
+];
+
 function TenantList() {
     const [tenants, setTenants] = useState([]);
     const [error, setError] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
+    const [activeFilter, setActiveFilter] = useState('all');
 
     useEffect(() => {
         fetch('/api/tenants/')
@@ -47,10 +55,29 @@ function TenantList() {
         return <div>Error loading tenants: {error.message}</div>;
     }
 
+    // Filtered here rather than server-side: the endpoint already returns
+    // every tenant, so this needs no request and no API change.
+    const activeMatch = FILTERS.find(f => f.key === activeFilter).match;
+    const visibleTenants = tenants.filter(t => activeMatch(Number(t.balance)));
+
     return (
         <div className="tenant-list">
             <h2>Tenants</h2>
-            {tenants.length === 0 ? (
+            {/* Outside the empty check below, so filtering down to zero rows
+                still leaves a way back to All. */}
+            <div className="tenant-filters">
+                {FILTERS.map(({ key, label, match }) => (
+                    <button
+                        key={key}
+                        onClick={() => setActiveFilter(key)}
+                        className={key === activeFilter ? 'active' : ''}
+                        aria-pressed={key === activeFilter}
+                    >
+                        {label} ({tenants.filter(t => match(Number(t.balance))).length})
+                    </button>
+                ))}
+            </div>
+            {visibleTenants.length === 0 ? (
                 <p>No tenants found.</p>
             ) : (
                 <table>
@@ -65,7 +92,7 @@ function TenantList() {
                         </tr>
                     </thead>
                     <tbody>
-                        {tenants.map(tenant => (
+                        {visibleTenants.map(tenant => (
                             <tr key={tenant.id} className={balanceClass(tenant.balance)}>
                                 <td>{tenant.id}</td>
                                 <td>{tenant.pms_tenant_id}</td>
