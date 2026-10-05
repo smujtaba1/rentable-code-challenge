@@ -1,14 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import formatCurrency from './formatCurrency';
-
-// A positive balance is money owed, which is who the manager chases. A
-// negative one is the tenant in credit, so it must not look like a debt.
-const balanceClass = (balance) => {
-    const value = Number(balance);
-    if (value > 0) return 'owes';
-    if (value < 0) return 'in-credit';
-    return '';
-};
+import balanceTone from './balance';
 
 const FILTERS = [
     { key: 'all', label: 'All', match: () => true },
@@ -88,7 +80,7 @@ function TenantList({ onSelectTenant, activeFilter, onFilterChange }) {
                     </thead>
                     <tbody>
                         {visibleTenants.map(tenant => (
-                            <tr key={tenant.id} className={balanceClass(tenant.balance)}>
+                            <tr key={tenant.id} className={balanceTone(tenant.balance)}>
                                 <td>{tenant.id}</td>
                                 <td>{tenant.pms_tenant_id}</td>
                                 <td>{tenant.name}</td>

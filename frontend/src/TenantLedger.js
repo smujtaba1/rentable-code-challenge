@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import formatCurrency, { formatSigned } from './formatCurrency';
+import balanceTone from './balance';
 
 // The balance after every entry, not just at the end. Reconciling means
 // comparing two ledgers until the numbers stop matching, and a closing total
@@ -59,9 +60,23 @@ function TenantLedger({ tenant, onBack }) {
 
     return (
         <div className="tenant-ledger">
-            <button onClick={onBack}>&larr; Back to Tenants</button>
+            <div className="ledger-actions">
+                <button onClick={onBack}>&larr; Back to Tenants</button>
+                {/* download makes this a download rather than a navigation
+                    that turns into one. Without it the attempt lands in
+                    session history, and back or forward re-fires it. The
+                    filename still comes from the server's
+                    Content-Disposition. */}
+                <a
+                    className="csv-link"
+                    href={`/api/tenants/${tenant.id}/transactions/csv/`}
+                    download
+                >
+                    Download CSV
+                </a>
+            </div>
             <h2>{tenant.name}</h2>
-            <p>Unit {tenant.unit}</p>
+            <p className="ledger-unit">Unit {tenant.unit}</p>
             {isLoading ? (
                 <div className="spinner" role="status" aria-label="Loading ledger" />
             ) : error ? (
@@ -79,25 +94,17 @@ function TenantLedger({ tenant, onBack }) {
                             <span>Total Paid</span>
                             <strong>{formatCurrency(totals.paid)}</strong>
                         </div>
-                        <div>
+                        <div className={`balance ${balanceTone(totals.balance)}`}>
                             <span>Balance</span>
                             <strong>{formatCurrency(totals.balance)}</strong>
                         </div>
                     </div>
-                    {/* A plain link: the server sets Content-Disposition, so
-                        the browser handles the download itself. */}
-                    <a
-                        className="csv-link"
-                        href={`/api/tenants/${tenant.id}/transactions/csv/`}
-                    >
-                        Download CSV
-                    </a>
                     <table>
                         <thead>
                             <tr>
-                                <th>Date</th>
+                                <th className="col-date">Date</th>
                                 <th>Description</th>
-                                <th>Type</th>
+                                <th className="col-type">Type</th>
                                 <th className="amount">Amount</th>
                                 <th className="amount">Balance</th>
                             </tr>
@@ -107,7 +114,11 @@ function TenantLedger({ tenant, onBack }) {
                                 <tr key={transaction.id}>
                                     <td>{transaction.date}</td>
                                     <td>{transaction.description}</td>
-                                    <td>{transaction.type}</td>
+                                    <td>
+                                        <span className={`badge ${transaction.type}`}>
+                                            {transaction.type}
+                                        </span>
+                                    </td>
                                     {/* The signed effect, so the row states
                                         whether it adds or subtracts. */}
                                     <td className="amount">{formatSigned(transaction.effect)}</td>
