@@ -10,6 +10,8 @@ function App() {
   // Held here rather than in TenantList, which unmounts while a ledger is
   // open and would otherwise reset the filter on the way back.
   const [activeFilter, setActiveFilter] = useState('all');
+  // Same reasoning for the sort.
+  const [sort, setSort] = useState({ key: 'name', direction: 'asc' });
 
   return (
     <div className="App">
@@ -27,6 +29,8 @@ function App() {
             onSelectTenant={setSelectedTenant}
             activeFilter={activeFilter}
             onFilterChange={setActiveFilter}
+            sort={sort}
+            onSortChange={setSort}
           />
         )}
       </main>

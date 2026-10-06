@@ -183,7 +183,7 @@
   color: #1a5fb4;
 }
 
-.ledger-actions {
+.ledger-toolbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -235,4 +235,47 @@
 .tenant-ledger th.amount,
 .tenant-ledger td.amount {
   width: 130px;
+}
+
+/* The sort control is a button for keyboard access, but should read as a
+   table header. */
+.tenant-list th button {
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  font-weight: bold;
+  color: inherit;
+  cursor: pointer;
+}
+
+/* Reads as a text link rather than a form control, but stays a button so
+   keyboard focus and Enter work. Repeated once per row, a bordered control
+   would compete with the balance colouring.
+
+   Underlined rather than coloured: it is the affordance that does not depend
+   on colour, and blue already means "in credit" on this screen. */
+.back-link,
+.link-button {
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  color: #282c34;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.back-link {
+  display: inline-block;
+  margin-bottom: 4px;
+}
+
+.back-link:hover,
+.link-button:hover {
+  color: #0b5ed7;
+}
+
+.tenant-list .col-action {
+  width: 110px;
 }

@@ -60,21 +60,9 @@ function TenantLedger({ tenant, onBack }) {
 
     return (
         <div className="tenant-ledger">
-            <div className="ledger-actions">
-                <button onClick={onBack}>&larr; Back to Tenants</button>
-                {/* download makes this a download rather than a navigation
-                    that turns into one. Without it the attempt lands in
-                    session history, and back or forward re-fires it. The
-                    filename still comes from the server's
-                    Content-Disposition. */}
-                <a
-                    className="csv-link"
-                    href={`/api/tenants/${tenant.id}/transactions/csv/`}
-                    download
-                >
-                    Download CSV
-                </a>
-            </div>
+            <button className="back-link" onClick={onBack}>
+                &larr; Back to Tenants
+            </button>
             <h2>{tenant.name}</h2>
             <p className="ledger-unit">Unit {tenant.unit}</p>
             {isLoading ? (
@@ -85,19 +73,33 @@ function TenantLedger({ tenant, onBack }) {
                 <p>No transactions for this tenant.</p>
             ) : (
                 <>
-                    <div className="ledger-summary">
-                        <div>
-                            <span>Total Charged</span>
-                            <strong>{formatCurrency(totals.charged)}</strong>
+                    <div className="ledger-toolbar">
+                        <div className="ledger-summary">
+                            <div>
+                                <span>Total Charged</span>
+                                <strong>{formatCurrency(totals.charged)}</strong>
+                            </div>
+                            <div>
+                                <span>Total Paid</span>
+                                <strong>{formatCurrency(totals.paid)}</strong>
+                            </div>
+                            <div className={`balance ${balanceTone(totals.balance)}`}>
+                                <span>Balance</span>
+                                <strong>{formatCurrency(totals.balance)}</strong>
+                            </div>
                         </div>
-                        <div>
-                            <span>Total Paid</span>
-                            <strong>{formatCurrency(totals.paid)}</strong>
-                        </div>
-                        <div className={`balance ${balanceTone(totals.balance)}`}>
-                            <span>Balance</span>
-                            <strong>{formatCurrency(totals.balance)}</strong>
-                        </div>
+                        {/* download makes this a download rather than a
+                            navigation that turns into one. Without it the
+                            attempt lands in session history, and back or
+                            forward re-fires it. The filename comes from
+                            Content-Disposition. */}
+                        <a
+                            className="csv-link"
+                            href={`/api/tenants/${tenant.id}/transactions/csv/`}
+                            download
+                        >
+                            Download CSV
+                        </a>
                     </div>
                     <table>
                         <thead>
