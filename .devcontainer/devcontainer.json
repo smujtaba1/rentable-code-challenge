@@ -13,7 +13,14 @@
 	},
 
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
-	// "forwardPorts": [],
+	// 'forwardPorts' is honored by editors; the devcontainer CLI ignores it, so
+	// 'appPort' publishes the same ports as real Docker port mappings.
+	"forwardPorts": [3009, 8009],
+	"appPort": [3009, 8009],
+	"portsAttributes": {
+		"3009": { "label": "Frontend (React)" },
+		"8009": { "label": "Backend (Django)" }
+	},
 
 	// Use 'postCreateCommand' to run commands after the container is created.
 	"postCreateCommand": ".devcontainer/post_create.sh"
